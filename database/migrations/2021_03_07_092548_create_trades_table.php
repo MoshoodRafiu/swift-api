@@ -18,7 +18,6 @@ class CreateTradesTable extends Migration
             $table->foreignId('buyer_id');
             $table->foreignId('seller_id');
             $table->foreignId('agent_id')->nullable();
-            $table->foreignId('advert_id');
             $table->double('amount');
             $table->double('amount_usd');
             $table->double('amount_ngn');

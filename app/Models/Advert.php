@@ -12,6 +12,7 @@ class Advert extends Model
     protected $fillable = [
         'user_id',
         'coin_id',
+        'type',
         'min',
         'max',
         'rate',
@@ -27,11 +28,6 @@ class Advert extends Model
     public function coin(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Coin::class);
-    }
-
-    public function trades(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(Trade::class);
     }
 
     public function bank(): \Illuminate\Database\Eloquent\Relations\HasOne

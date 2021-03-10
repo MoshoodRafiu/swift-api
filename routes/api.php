@@ -24,6 +24,10 @@ Route::middleware('auth:api')->group(function (){
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::get('me', [AuthController::class, 'me']);
 
-    Route::get('adverts/{coin}/{type}', [AdvertController::class, 'index']);
+    Route::get('adverts/filter/{coin}/{type}', [AdvertController::class, 'index']);
+    Route::get('user/adverts', [AdvertController::class, 'userAdverts']);
     Route::post('adverts/store', [AdvertController::class, 'store']);
+    Route::get('adverts/{advert}/show', [AdvertController::class, 'show']);
+    Route::put('adverts/{advert}/update', [AdvertController::class, 'update']);
+    Route::delete('adverts/{advert}/destroy', [AdvertController::class, 'destroy']);
 });

@@ -17,11 +17,6 @@ class Trade extends Model
         'amount_ngn'
     ];
 
-    public function advert(): \Illuminate\Database\Eloquent\Relations\BelongsTo
-    {
-        return $this->belongsTo(Advert::class);
-    }
-
     public function coin(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Coin::class);
