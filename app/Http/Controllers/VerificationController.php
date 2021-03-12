@@ -3,83 +3,70 @@
 namespace App\Http\Controllers;
 
 use App\Models\Verification;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class VerificationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public static function emailSend($user): \Illuminate\Http\JsonResponse
     {
-        //
+        if (!(new VerificationController)->userAlreadyVerified($user,'email')){
+            return response()->json(['error' => 'Email already verified']);
+        }
+//        Send email
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function emailVerify(): \Illuminate\Http\JsonResponse
     {
-        //
+        $user = auth()->user();
+        if (!$this->userAlreadyVerified($user,'email')){
+            return response()->json(['error' => 'Email already verified']);
+        }
+//        Send email
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function phoneSend(): \Illuminate\Http\JsonResponse
     {
-        //
+        $user = auth()->user();
+        if (!$this->userAlreadyVerified($user,'phone')){
+            return response()->json(['error' => 'Phone already verified']);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Verification  $verification
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Verification $verification)
+    public function phoneResend(): \Illuminate\Http\JsonResponse
     {
-        //
+        $user = auth()->user();
+        if (!$this->userAlreadyVerified($user,'phone')){
+            return response()->json(['error' => 'Phone already verified']);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Verification  $verification
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Verification $verification)
+    public function phoneVerify(Request $request): \Illuminate\Http\JsonResponse
     {
-        //
+        $user = auth()->user();
+        if (!$this->userAlreadyVerified($user,'phone')){
+            return response()->json(['error' => 'Phone already verified']);
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Verification  $verification
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Verification $verification)
+    public function documentUpload(Request $request): \Illuminate\Http\JsonResponse
     {
-        //
+        $user = auth()->user();
+        if (!$this->userAlreadyVerified($user,'kyc')){
+            return response()->json(['error' => 'KYC verification already completed']);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Verification  $verification
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Verification $verification)
+    protected function userAlreadyVerified($user, $type): bool
     {
-        //
+        switch ($type){
+            case "email":
+                return !!($user->verification()->count() > 0 && $user->verification()['email']);
+            case "phone":
+                return !!($user->verification()->count() > 0 && $user->verification()['phone']);
+            case "kyc":
+                return !!($user->verification()->count() > 0 && $user->verification()['kyc']);
+        }
+        return false;
     }
 }

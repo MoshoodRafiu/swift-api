@@ -5,8 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\TradeController;
 use App\Http\Controllers\TransactionPinController;
-use App\Models\Verification;
-use Illuminate\Http\Request;
+use App\Http\Controllers\VerificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,13 +40,12 @@ Route::middleware('auth:api')->group(function (){
     Route::post('pin/store', [TransactionPinController::class, 'store']);
     Route::post('pin/update', [TransactionPinController::class, 'update']);
 
-    Route::post('verification/email/send', [Verification::class, 'emailSend']);
-    Route::post('verification/email/resend', [Verification::class, 'emailResend']);
-    Route::post('verification/email/verify', [Verification::class, 'emailVerify']);
-    Route::post('verification/phone/send', [Verification::class, 'phoneSend']);
-    Route::post('verification/phone/resend', [Verification::class, 'phoneResend']);
-    Route::post('verification/phone/verify', [Verification::class, 'phoneVerify']);
-    Route::post('verification/document/upload', [Verification::class, 'documentUpload']);
+    Route::post('verification/email/resend', [VerificationController::class, 'emailResend']);
+    Route::post('verification/email/verify', [VerificationController::class, 'emailVerify']);
+    Route::post('verification/phone/send', [VerificationController::class, 'phoneSend']);
+    Route::post('verification/phone/resend', [VerificationController::class, 'phoneResend']);
+    Route::post('verification/phone/verify', [VerificationController::class, 'phoneVerify']);
+    Route::post('verification/document/upload', [VerificationController::class, 'documentUpload']);
 
     Route::get('trades/{type}/fetch', [TradeController::class, 'index']);
     Route::get('trades/{trade}/show', [TradeController::class, 'show']);
