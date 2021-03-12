@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AdvertController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MainController;
+use App\Http\Controllers\TransactionPinController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,4 +32,10 @@ Route::middleware('auth:api')->group(function (){
     Route::get('adverts/{advert}/show', [AdvertController::class, 'show']);
     Route::put('adverts/{advert}/update', [AdvertController::class, 'update']);
     Route::delete('adverts/{advert}/destroy', [AdvertController::class, 'destroy']);
+
+    Route::post('profile/update', [MainController::class, 'updateProfile']);
+    Route::post('password/update', [MainController::class, 'updatePassword']);
+
+    Route::post('pin/store', [TransactionPinController::class, 'store']);
+    Route::post('pin/update', [TransactionPinController::class, 'update']);
 });

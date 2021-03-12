@@ -15,6 +15,7 @@ class CreateTransactionPinsTable extends Migration
     {
         Schema::create('transaction_pins', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id');
             $table->string('pin');
             $table->timestamps();
         });
