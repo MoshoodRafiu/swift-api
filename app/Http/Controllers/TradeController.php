@@ -7,79 +7,33 @@ use Illuminate\Http\Request;
 
 class TradeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index($type): \Illuminate\Http\JsonResponse
     {
-        //
+        $trades = Trade::query()->where(function ($q){
+            $q->where('buyer_id', auth()->user()['id'])
+                ->orWhere('seller_id', auth()->user()['id']);});
+        switch ($type){
+            case "pending":
+                $trades = $trades->where('status', 0)->get();
+                break;
+            case "success":
+                $trades = $trades->where('status', 1)->get();
+                break;
+            case "cancelled":
+                $trades = $trades->where('status', 2)->get();
+                break;
+            default:
+                $trades = $trades->get();
+        }
+        return response()->json([
+            'data' => $trades
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function show(Trade $trade): \Illuminate\Http\JsonResponse
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Trade  $trade
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Trade $trade)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Trade  $trade
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Trade $trade)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Trade  $trade
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Trade $trade)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Trade  $trade
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Trade $trade)
-    {
-        //
+        return response()->json([
+            'data' => $trade
+        ]);
     }
 }
