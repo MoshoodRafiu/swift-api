@@ -14,6 +14,16 @@ class AdvertResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this['id'],
+            'user' => $this->user,
+            'coin' => $this->coin,
+            'type' => $this['type'],
+            'min' => $this['min'],
+            'max' => $this['max'],
+            'rate' => $this['rate'],
+            'duration' => $this['duration'],
+            'status' => $this['active'] ? 'Active' : 'Disabled',
+        ];
     }
 }

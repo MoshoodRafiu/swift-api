@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AdvertResource;
 use App\Models\Advert;
 use App\Models\Coin;
 use Illuminate\Http\Request;
@@ -18,21 +19,21 @@ class AdvertController extends Controller
             return response()->json(['error' => 'Coin not found'], 400);
         }
         return response()->json([
-            'data' => $coin->adverts()
-                            ->where('type', $type)
-                            ->latest()
-                            ->orderBy('rate', 'desc')
-                            ->get()
+            'data' => AdvertResource::collection($coin->adverts()
+                                                        ->where('type', $type)
+                                                        ->latest()
+                                                        ->orderBy('rate', 'desc')
+                                                        ->get())
         ]);
     }
 
     public function userAdverts(Request $request): \Illuminate\Http\JsonResponse
     {
         return response()->json([
-            'data' => auth()
-                        ->user()
-                        ->adverts()
-                        ->get()
+            'data' => AdvertResource::collection(auth()
+                                            ->user()
+                                            ->adverts()
+                                            ->get())
         ]);
     }
 
@@ -54,7 +55,7 @@ class AdvertController extends Controller
         $advert->bank()->create($request->only(['bank_name', 'account_name', 'account_number']));
         return response()->json([
             'message' => 'Advert created successfully',
-            'data' => $advert
+            'data' => new AdvertResource($advert)
         ]);
     }
 
@@ -64,7 +65,7 @@ class AdvertController extends Controller
             return response()->json(['error' => 'Access Restricted'], 400);
         }
         return response()->json([
-            'data' => $advert
+            'data' => new AdvertResource($advert)
         ]);
     }
 
@@ -83,7 +84,7 @@ class AdvertController extends Controller
         $advert->bank()->update($request->only(['bank_name', 'account_name', 'account_number']));
         return response()->json([
             'message' => 'Advert update successfully',
-            'data' => $advert
+            'data' => new AdvertResource($advert)
         ]);
     }
 

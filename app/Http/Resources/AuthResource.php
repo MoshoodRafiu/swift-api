@@ -17,7 +17,7 @@ class AuthResource extends JsonResource
             'username' => $this['username'],
             'email' => $this['email'],
             'phone' => $this['phone'],
-            'status' => $this['active'] == 1 ? 'Active' : 'Inactive'
+            'status' => $this['active'] ? 'Active' : 'Inactive'
         ];
     }
 }
