@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TradeResource;
+use App\Http\Resources\TransactionResource;
 use App\Models\Advert;
 use App\Models\Coin;
 use App\Models\Trade;
@@ -36,7 +38,7 @@ class TradeController extends Controller
     public function show(Trade $trade): \Illuminate\Http\JsonResponse
     {
         return response()->json([
-            'data' => $trade
+            'data' => new TradeResource($trade)
         ]);
     }
 
@@ -64,10 +66,13 @@ class TradeController extends Controller
             'amount' => $request['amount'],
             'amount_usd' => $this->getAmountInUSD($request['amount']),
             'amount_ngn' => $this->getAmountInUSD($request['amount']) * $advert['rate'],
+            'duration' => $request['duration'],
+            'window_expiry' => date('Y-m-d H:i:s', strtotime(now().' + '.$advert['duration'].' minutes')),
         ]);
+        $trade->payment()->create($advert->bank);
         return response()->json([
             'message' => 'Trade initiated successfully',
-            'data' => $trade
+            'data' => new TradeResource($trade)
         ]);
     }
 

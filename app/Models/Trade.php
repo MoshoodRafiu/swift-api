@@ -15,6 +15,7 @@ class Trade extends Model
         'amount',
         'amount_usd',
         'amount_ngn',
+        'duration',
         'window_expiry'
     ];
 
@@ -40,5 +41,9 @@ class Trade extends Model
     public function agent(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class, 'agent_id');
+    }
+    public function payment(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Payment::class);
     }
 }
