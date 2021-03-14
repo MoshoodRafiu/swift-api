@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\WalletResource;
+use App\Http\Resources\WalletTransactionResource;
 use App\Models\Coin;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
@@ -22,6 +23,15 @@ class WalletController extends Controller
     public function index(): \Illuminate\Http\JsonResponse
     {
         return response()->json(['data' => WalletResource::collection(auth()->user()->wallets()->get())]);
+    }
+
+    public function show($coin): \Illuminate\Http\JsonResponse
+    {
+        $coin = Coin::all()->where('abbr', $coin)->first();
+        if (!$coin){
+            return response()->json(['error' => 'Coin not found'], 400);
+        }
+        return response()->json(['data' => new WalletTransactionResource($coin->wallets()->where('user_id', auth()->user()['id'])->first())]);
     }
 
     protected static function generateBitcoinAddress($user){

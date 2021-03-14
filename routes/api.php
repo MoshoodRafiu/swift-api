@@ -51,4 +51,5 @@ Route::middleware('auth:api')->group(function (){
     Route::get('trades/{trade}/show', [TradeController::class, 'show']);
 
     Route::get('wallets', [WalletController::class, 'index']);
+    Route::get('wallets/{coin}/show', [WalletController::class, 'show']);
 });

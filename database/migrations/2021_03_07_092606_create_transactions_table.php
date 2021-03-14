@@ -15,6 +15,7 @@ class CreateTransactionsTable extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('wallet_id');
             $table->enum('type', ['deposit', 'withdrawal']);
             $table->text('via');
             $table->double('amount');
