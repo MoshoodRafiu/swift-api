@@ -14,6 +14,30 @@ class TransactionResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this['id'],
+            'wallet' => new WalletResource($this->wallet),
+            'type' => $this['type'],
+            'via' => $this['via'],
+            'amount' => $this['amount'],
+            'status' => $this->getStatus($this['status']),
+        ];
+    }
+
+    protected function getStatus($key): ?string
+    {
+        $status = null;
+        switch ($key) {
+            case 0:
+                $status = 'pending';
+                break;
+            case 1:
+                $status = 'success';
+                break;
+            case 2:
+                $status = 'cancelled';
+                break;
+        }
+        return $status;
     }
 }

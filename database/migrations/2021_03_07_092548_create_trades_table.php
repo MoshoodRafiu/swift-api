@@ -15,6 +15,7 @@ class CreateTradesTable extends Migration
     {
         Schema::create('trades', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('coin_id');
             $table->foreignId('buyer_id');
             $table->foreignId('seller_id');
             $table->foreignId('agent_id')->nullable();
@@ -26,6 +27,7 @@ class CreateTradesTable extends Migration
             $table->integer('buyer_status')->default(0);
             $table->integer('seller_status')->default(0);
             $table->integer('status')->default(0);
+            $table->timestamp('window_expiry');
             $table->timestamps();
         });
     }

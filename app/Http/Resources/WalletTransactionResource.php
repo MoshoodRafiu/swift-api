@@ -19,7 +19,7 @@ class WalletTransactionResource extends JsonResource
             'coin' => new CoinResource($this->coin),
             'address' => $this['address'],
             'balance' => $this['balance'],
-            'transaction' => $this->transactions
+            'transaction' => TransactionResource::collection($this->transactions)
         ];
     }
 }

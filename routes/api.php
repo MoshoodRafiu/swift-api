@@ -49,6 +49,7 @@ Route::middleware('auth:api')->group(function (){
 
     Route::get('trades/{type}/fetch', [TradeController::class, 'index']);
     Route::get('trades/{trade}/show', [TradeController::class, 'show']);
+    Route::post('trades/initiate', [TradeController::class, 'initiate']);
 
     Route::get('wallets', [WalletController::class, 'index']);
     Route::get('wallets/{coin}/show', [WalletController::class, 'show']);
