@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\WalletResource;
 use App\Models\Coin;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
@@ -16,6 +17,11 @@ class WalletController extends Controller
         self::generateEthereumAddress($user);
         self::generateBitcoinCashAddress($user);
         self::generateLitecoinAddress($user);
+    }
+
+    public function index(): \Illuminate\Http\JsonResponse
+    {
+        return response()->json(['data' => WalletResource::collection(auth()->user()->wallets()->get())]);
     }
 
     protected static function generateBitcoinAddress($user){

@@ -6,6 +6,7 @@ use App\Http\Controllers\MainController;
 use App\Http\Controllers\TradeController;
 use App\Http\Controllers\TransactionPinController;
 use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
+Route::post('verification/email/verify', [VerificationController::class, 'emailVerify']);
 
 Route::middleware('auth:api')->group(function (){
     Route::post('logout', [AuthController::class, 'logout']);
@@ -41,11 +43,12 @@ Route::middleware('auth:api')->group(function (){
     Route::post('pin/update', [TransactionPinController::class, 'update']);
 
     Route::post('verification/email/resend', [VerificationController::class, 'emailResend']);
-    Route::post('verification/email/verify', [VerificationController::class, 'emailVerify']);
     Route::post('verification/phone/send', [VerificationController::class, 'phoneSend']);
     Route::post('verification/phone/verify', [VerificationController::class, 'phoneVerify']);
     Route::post('verification/document/upload', [VerificationController::class, 'documentUpload']);
 
     Route::get('trades/{type}/fetch', [TradeController::class, 'index']);
     Route::get('trades/{trade}/show', [TradeController::class, 'show']);
+
+    Route::get('wallets', [WalletController::class, 'index']);
 });

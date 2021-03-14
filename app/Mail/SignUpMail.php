@@ -29,8 +29,8 @@ class SignUpMail extends Mailable
      */
     public function build(): SignUpMail
     {
-        return $this->from(env('MAIL_FROM_ADDRESS', 'Swifthrive'))
+        return $this->from(env('MAIL_FROM_ADDRESS' ), 'Swifthrive')
                     ->subject('Email Verification')
-                    ->view('view.name');
+                    ->view('mail.signup');
     }
 }

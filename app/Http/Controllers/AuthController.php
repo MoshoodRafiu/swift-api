@@ -26,14 +26,20 @@ class AuthController extends Controller
 
         $credentials['password'] = Hash::make($credentials['password']);
         $credentials['code'] = $this->generateUserCode();
-
+        $otp = sha1($credentials['email'].time());
+        $credentials['email_verification_token'] = Hash::make($otp);
+        $credentials['email_verification_token_expiry'] = date('Y-m-d H:i:s', strtotime(now().' + 1 hour'));
         $user = User::create($credentials);
         $token = auth('api')->attempt(request(['email', 'password']));
 
         if (!($user && $token)){
             return response()->json(['error' => 'Something went wrong'], 400);
         }
-
+        try {
+            MailController::sendSignUpEmail($user, $otp);
+        }catch (\Exception $exception){
+            return response()->json(['error' => 'Something went wrong'], 400);
+        }
         try {
             WalletController::generateWallets($user);
         }catch (\Exception $exception){

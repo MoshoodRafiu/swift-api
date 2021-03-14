@@ -16,8 +16,8 @@ class AdvertResource extends JsonResource
     {
         return [
             'id' => $this['id'],
-            'user' => $this->user,
-            'coin' => $this->coin,
+            'user' => new AuthResource($this->user),
+            'coin' => new CoinResource($this->coin),
             'type' => $this['type'],
             'min' => $this['min'],
             'max' => $this['max'],

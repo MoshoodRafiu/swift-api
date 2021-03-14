@@ -26,6 +26,11 @@ class Wallet extends Model
         return $this->belongsTo(Coin::class);
     }
 
+    public function transactions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
     public function credential(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Credential::class);
