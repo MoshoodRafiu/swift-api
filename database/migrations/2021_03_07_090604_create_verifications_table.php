@@ -15,6 +15,7 @@ class CreateVerificationsTable extends Migration
     {
         Schema::create('verifications', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id');
             $table->boolean('email')->default(false);
             $table->boolean('phone')->default(false);
             $table->boolean('kyc')->default(false);

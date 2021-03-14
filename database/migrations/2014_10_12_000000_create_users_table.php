@@ -23,6 +23,8 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->string('password');
+            $table->string('email_verification_token')->nullable();
+            $table->timestamp('email_verification_token_expiry')->nullable();
             $table->boolean('active')->default(true);
             $table->enum('role', ['user', 'admin', 'agent'])->default('user');
             $table->rememberToken();

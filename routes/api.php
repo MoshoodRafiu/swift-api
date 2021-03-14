@@ -43,7 +43,6 @@ Route::middleware('auth:api')->group(function (){
     Route::post('verification/email/resend', [VerificationController::class, 'emailResend']);
     Route::post('verification/email/verify', [VerificationController::class, 'emailVerify']);
     Route::post('verification/phone/send', [VerificationController::class, 'phoneSend']);
-    Route::post('verification/phone/resend', [VerificationController::class, 'phoneResend']);
     Route::post('verification/phone/verify', [VerificationController::class, 'phoneVerify']);
     Route::post('verification/document/upload', [VerificationController::class, 'documentUpload']);
 
