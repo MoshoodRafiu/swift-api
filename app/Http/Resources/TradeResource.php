@@ -28,7 +28,9 @@ class TradeResource extends JsonResource
             'buyer_status' => $this['buyer_status'],
             'seller_status' => $this['seller_status'],
             'duration' => $this['amount_ngn'],
-            'payment' => new PaymentResource($this->payment)
+            'payment' => new PaymentResource($this->payment),
+            'seller_rating' => $this->ratings()->where('user_id', $this['seller_id'])->first()['star'],
+            'buyer_rating' => $this->ratings()->where('user_id', $this['buyer_id'])->first()['star'],
         ];
     }
 }

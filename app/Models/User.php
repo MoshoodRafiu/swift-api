@@ -84,6 +84,18 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Wallet::class);
     }
 
+    public function ratings(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+    public function rating(): float
+    {
+        $count = auth()->user()->ratings()->count();
+        $sum = auth()->user()->ratings()->sum('star');
+        return round($sum / $count, 1);
+    }
+
     public function pinVerified($pin): bool
     {
         return !!Hash::check($pin, auth()->user()->pin()->first()['pin']);

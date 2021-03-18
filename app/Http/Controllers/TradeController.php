@@ -236,6 +236,40 @@ class TradeController extends Controller
         ]);
     }
 
+    public function rateUser(Trade $trade, Request $request): \Illuminate\Http\JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            "star" => ['required', 'min:1', 'max:5', 'numeric'],
+        ]);
+        if ($validator->fails()){
+            return response()->json(['error' => $validator->messages()], 422);
+        }
+        $user = auth()->user();
+        if ($trade['status'] != 1){
+            return response()->json(['error' => 'Can\'t rate user, trade not completed'], 400);
+        }
+        switch ($user['id']){
+            case $trade['buyer_id']:
+                if ($trade->ratings()->where('user_id', $trade['seller_id'])->first()){
+                    return response()->json(['error' => 'You have already rated this user for this trade'], 400);
+                }
+                $trade->ratings()->create(['user_id' => $trade['seller_id'],'star' => $request['star']]);
+                break;
+            case $trade['seller_id']:
+                if ($trade->ratings()->where('user_id', $trade['buyer_id'])->first()){
+                    return response()->json(['error' => 'You have already rated this user for this trade'], 400);
+                }
+                $trade->ratings()->create(['user_id' => $trade['buyer_id'],'star' => $request['star']]);
+                break;
+            default:
+                return response()->json(['error' => 'Action not allowed'], 400);
+        }
+        return response()->json([
+            'success' => 'User rated successfully',
+            'data' => $trade
+        ]);
+    }
+
     protected function getAmountInUSD($amount)
     {
         return $amount * 23456;

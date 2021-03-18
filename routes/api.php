@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdvertController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\TradeController;
 use App\Http\Controllers\TransactionPinController;
@@ -55,6 +56,10 @@ Route::middleware('auth:api')->group(function (){
     Route::put('trades/{trade}/coin/release', [TradeController::class, 'releaseCoin']);
     Route::put('trades/{trade}/summon/{type}/email', [TradeController::class, 'summonTraderViaEmail']);
     Route::put('trades/{trade}/summon/{type}/sms', [TradeController::class, 'summonTraderViaSMS']);
+    Route::put('trades/{trade}/rate', [TradeController::class, 'rateUser']);
+
+    Route::get('trades/{trade}/chats', [ChatController::class, 'index']);
+    Route::post('trades/chats', [ChatController::class, 'store']);
 
     Route::get('wallets', [WalletController::class, 'index']);
     Route::get('wallets/{coin}/show', [WalletController::class, 'show']);
