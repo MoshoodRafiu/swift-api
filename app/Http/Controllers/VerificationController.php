@@ -67,19 +67,7 @@ class VerificationController extends Controller
             return response()->json(['error' => 'Update profile before phone verification'] ,400);
         }
         try {
-            $res = Http::post('https://termii.com/api/sms/otp/send', [
-                "api_key" => env('TERMI_KEY'),
-                "message_type" => env('TERMI_MESSAGE_TYPE'),
-                "to" => $user['phone'],
-                "from" => env('TERMII_FROM'),
-                "channel" => env('TERMII_CHANNEL'),
-                "pin_attempts" => env('TERMII_PIN_ATTEMPT'),
-                "pin_time_to_live" => env('TERMII_PIN_TIME_TO_LIVE'),
-                "pin_length" => env('TERMII_PIN_LENGTH'),
-                "pin_placeholder" => "< 1234 >",
-                "message_text" => "Your verification pin for Swifthrive is < 1234 >. Pin expires in 30 minutes",
-                "pin_type" => env('TERMII_PIN_TYPE'),
-            ])->json();
+            $res = SMSController::sendPhoneVerificationSMS($user);
         }catch (\Exception $exception){
             return response()->json(['error' => 'Error connecting to verification server'],500);
         }
@@ -116,7 +104,7 @@ class VerificationController extends Controller
                 "pin" => $request['code'],
             ])->json();
         }catch (\Exception $exception){
-            return response()->json(['error' => 'Error connecting to verification server'],500);
+            return response()->json(['error' => 'Error connecting to SMS server'],500);
         }
         if (array_key_exists("verified", $response)){
             if ($response['verified'] === true){

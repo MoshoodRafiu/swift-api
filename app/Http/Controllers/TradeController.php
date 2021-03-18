@@ -196,6 +196,46 @@ class TradeController extends Controller
         ]);
     }
 
+    public function summonTraderViaSMS(Trade $trade, $type): \Illuminate\Http\JsonResponse
+    {
+        switch ($type){
+            case "buyer":
+                if (auth()->user()['id'] != $trade['seller_id']){
+                    return response()->json(['error' => 'Buyer summon via SMS not allowed'], 400);
+                }
+                if ($trade['seller_has_summoned'] > 0){
+                    return response()->json(['error' => 'Summon via SMS can only be made once'], 400);
+                }
+                $sender = $trade->seller;
+                $recipient = $trade->buyer;
+                $update = ['seller_has_summoned' => 1];
+                break;
+            case "seller":
+                if (auth()->user()['id'] != $trade['buyer_id']){
+                    return response()->json(['error' => 'Seller summon via SMS not allowed'], 400);
+                }
+                if ($trade['buyer_has_summoned'] > 0){
+                    return response()->json(['error' => 'Summon via SMS can only be made once'], 400);
+                }
+                $sender = $trade->buyer;
+                $recipient = $trade->seller;
+                $update = ['buyer_has_summoned' => 1];
+                break;
+            default:
+                return response()->json(['error' => 'Summon not allowed'], 400);
+        }
+        try {
+            SMSController::sendSummonSMS($sender, $recipient, $trade);
+            $trade->update($update);
+        }catch (\Exception $exception){
+            return response()->json(['error' => 'Error summoning via email'], 400);
+        }
+        return response()->json([
+            'success' => 'Summon SMS sent',
+            'data' => $trade
+        ]);
+    }
+
     protected function getAmountInUSD($amount)
     {
         return $amount * 23456;
