@@ -27,6 +27,7 @@ class CreateTradesTable extends Migration
             $table->integer('buyer_status')->default(0);
             $table->integer('seller_status')->default(0);
             $table->integer('status')->default(0);
+            $table->boolean('dispute')->default(false);
             $table->string('duration');
             $table->timestamp('window_expiry');
             $table->timestamps();

@@ -28,7 +28,7 @@ class TradeResource extends JsonResource
             'buyer_status' => $this['buyer_status'],
             'seller_status' => $this['seller_status'],
             'duration' => $this['amount_ngn'],
-            'payment' => $this->payment
+            'payment' => new PaymentResource($this->payment)
         ];
     }
 }

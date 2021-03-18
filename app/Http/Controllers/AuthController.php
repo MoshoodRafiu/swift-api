@@ -35,13 +35,9 @@ class AuthController extends Controller
         if (!($user && $token)){
             return response()->json(['error' => 'Something went wrong'], 400);
         }
+
         try {
             MailController::sendSignUpEmail($user, $otp);
-        }catch (\Exception $exception){
-            return response()->json(['error' => 'Something went wrong'], 400);
-        }
-        try {
-            WalletController::generateWallets($user);
         }catch (\Exception $exception){
             return response()->json(['error' => 'Something went wrong'], 400);
         }

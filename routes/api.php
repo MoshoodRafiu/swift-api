@@ -50,6 +50,10 @@ Route::middleware('auth:api')->group(function (){
     Route::get('trades/{type}/fetch', [TradeController::class, 'index']);
     Route::get('trades/{trade}/show', [TradeController::class, 'show']);
     Route::post('trades/initiate', [TradeController::class, 'initiate']);
+    Route::put('trades/{trade}/buyer/{level}/process', [TradeController::class, 'buyerProcess']);
+    Route::put('trades/{trade}/seller/{level}/process', [TradeController::class, 'sellerProcess']);
+    Route::put('trades/{trade}/coin/release', [TradeController::class, 'releaseCoin']);
+    Route::put('trades/{trade}/summon/{type}/email', [TradeController::class, 'summonTraderViaEmail']);
 
     Route::get('wallets', [WalletController::class, 'index']);
     Route::get('wallets/{coin}/show', [WalletController::class, 'show']);

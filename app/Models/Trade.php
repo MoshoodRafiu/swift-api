@@ -16,7 +16,9 @@ class Trade extends Model
         'amount_usd',
         'amount_ngn',
         'duration',
-        'window_expiry'
+        'window_expiry',
+        'buyer_status',
+        'seller_status'
     ];
 
     public function coin(): \Illuminate\Database\Eloquent\Relations\BelongsTo
