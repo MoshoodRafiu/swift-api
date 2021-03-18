@@ -170,17 +170,30 @@ class TradeController extends Controller
                 if (auth()->user()['id'] != $trade['seller_id']){
                     return response()->json(['error' => 'Buyer summon via mail not allowed'], 400);
                 }
-                $email = $trade->buyer()['email'];
+                $sender = $trade->seller;
+                $recipient = $trade->buyer;
+                $link = '/btc/trades/1/sell';
                 break;
             case "seller":
                 if (auth()->user()['id'] != $trade['buyer_id']){
                     return response()->json(['error' => 'Seller summon via mail not allowed'], 400);
                 }
-                $email = $trade->seller()['email'];
+                $sender = $trade->buyer;
+                $recipient = $trade->seller;
+                $link = '/btc/trades/1/sell';
                 break;
             default:
                 return response()->json(['error' => 'Summon not allowed'], 400);
         }
+        try {
+            MailController::sendSummonEmail($sender, $recipient, $trade, $link);
+        }catch (\Exception $exception){
+            return response()->json(['error' => 'Error summoning via email'], 400);
+        }
+        return response()->json([
+            'success' => 'Summon email sent',
+            'data' => $trade
+        ]);
     }
 
     protected function getAmountInUSD($amount)

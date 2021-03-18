@@ -11,14 +11,16 @@ class SummonMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $data;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($data)
     {
-        //
+        $this->data = $data;
     }
 
     /**
@@ -26,8 +28,10 @@ class SummonMail extends Mailable
      *
      * @return $this
      */
-    public function build()
+    public function build(): SummonMail
     {
-        return $this->view('view.name');
+        return $this->from(env('MAIL_FROM_ADDRESS' ), 'Swifthrive')
+            ->subject('Summon to Trade')
+            ->view('mail.summon');
     }
 }
