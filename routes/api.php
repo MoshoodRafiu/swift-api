@@ -58,8 +58,8 @@ Route::middleware('auth:api')->group(function (){
     Route::put('trades/{trade}/summon/{type}/sms', [TradeController::class, 'summonTraderViaSMS']);
     Route::put('trades/{trade}/rate', [TradeController::class, 'rateUser']);
 
-    Route::get('trades/{trade}/chats', [ChatController::class, 'index']);
-    Route::post('trades/chats', [ChatController::class, 'store']);
+    Route::get('trades/{trade}/chat', [ChatController::class, 'index']);
+    Route::post('trades/chat', [ChatController::class, 'store']);
 
     Route::get('wallets', [WalletController::class, 'index']);
     Route::get('wallets/{coin}/show', [WalletController::class, 'show']);
