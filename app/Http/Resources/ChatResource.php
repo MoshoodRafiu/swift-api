@@ -12,8 +12,14 @@ class ChatResource extends JsonResource
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
-        return parent::toArray($request);
+        return [
+            'sender' => new AuthResource($this->user),
+            'message' => $this['type'] == 'text' ? $this['message'] : url($this['message']),
+            'type' => $this['type'],
+            'sent' => $this['created_at']->diffForHumans(),
+            'is_agent' => $this['user_id'] == $this->trade['agent_id']
+        ];
     }
 }

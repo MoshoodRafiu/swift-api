@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ChatResource;
 use App\Models\Chat;
 use App\Models\Trade;
 use Illuminate\Http\Request;
@@ -11,7 +12,7 @@ class ChatController extends Controller
 {
     public function index(Trade $trade): \Illuminate\Http\JsonResponse
     {
-        return response()->json(['data' => $trade->chats()->get()]);
+        return response()->json(['data' => ChatResource::collection($trade->chats()->get())]);
     }
 
     public function store(Request $request): \Illuminate\Http\JsonResponse
@@ -34,10 +35,10 @@ class ChatController extends Controller
                 'message' => $request['message'],
                 'type' => $request['type']
             ]);
-        }elseif ($request['type'] == 'file'){
+        }elseif ($request['type'] == 'image'){
             $path = 'proofs';
-            $transferDoc = auth()->user()['code'].'-'. time() . '.' . $request['file']->getClientOriginalExtension();
-            $request['file']->move($path, $transferDoc);
+            $transferDoc = auth()->user()['code'].'-'. time() . '.' . $request['message']->getClientOriginalExtension();
+            $request['message']->move($path, $transferDoc);
             $msg = $trade->chats()->create([
                 'user_id' => auth()->user()['id'],
                 'message' => $path."/".$transferDoc,
@@ -48,7 +49,7 @@ class ChatController extends Controller
         }
         return response()->json([
             'message' => 'Message sent',
-            'data' => $msg
+            'data' => new ChatResource($msg)
         ]);
     }
 }
