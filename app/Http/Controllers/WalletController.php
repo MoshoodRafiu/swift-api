@@ -34,6 +34,26 @@ class WalletController extends Controller
         return response()->json(['data' => new WalletTransactionResource($coin->wallets()->where('user_id', auth()->user()['id'])->first())]);
     }
 
+    public static function walletBalanceVerifiedForUser($user, $coin, $amount)
+    {
+        $balance = 0;
+        $wallet = $user->wallets()->where('coin_id', $coin['id'])->first();
+        switch ($coin['abbr']){
+            case "btc":
+                $balance = self::getBitcoinWalletBalance($wallet['address']);
+                break;
+            case "eth":
+                $balance = self::getEthereumWalletBalance($wallet['address']);
+                break;
+            case "bch":
+                $balance = self::getBitcoinCashWalletBalance($wallet['address']);
+                break;
+            case "ltc":
+                $balance = self::getLitecoinWalletBalance($wallet['address']);
+        }
+        return $balance >= $amount;
+    }
+
     protected static function generateBitcoinAddress($user){
         $btc_address = Http::withHeaders([
             'Content-type' => 'application/json', //Content-Type: application/json
@@ -54,6 +74,12 @@ class WalletController extends Controller
             'stupuk' => Crypt::encryptString($btc_address['payload']['publicKey']),
         ]);
     }
+
+    protected static function getBitcoinWalletBalance($address)
+    {
+
+    }
+
     protected static function generateEthereumAddress($user){
         $eth_address = Http::withHeaders([
             'Content-type' => 'application/json', //Content-Type: application/json
@@ -75,6 +101,12 @@ class WalletController extends Controller
             'stupuk' => Crypt::encryptString($eth_address['payload']['publicKey']),
         ]);
     }
+
+    protected static function getEthereumWalletBalance($address)
+    {
+
+    }
+
     protected static function generateBitcoinCashAddress($user){
         $bch_address = Http::withHeaders([
             'Content-type' => 'application/json', //Content-Type: application/json
@@ -97,6 +129,11 @@ class WalletController extends Controller
         ]);
     }
 
+    protected static function getBitcoinCashWalletBalance($address)
+    {
+
+    }
+
     protected static function generateLitecoinAddress($user){
         $ltc_address = Http::withHeaders([
             'Content-type' => 'application/json', //Content-Type: application/json
@@ -114,5 +151,10 @@ class WalletController extends Controller
             'stuprk' => Crypt::encryptString($ltc_address['payload']['privateKey']),
             'stupuk' => Crypt::encryptString($ltc_address['payload']['publicKey']),
         ]);
+    }
+
+    protected static function getLitecoinWalletBalance($address)
+    {
+
     }
 }

@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\TradeController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransactionPinController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\WalletController;
@@ -60,6 +61,8 @@ Route::middleware('auth:api')->group(function (){
 
     Route::get('trades/{trade}/chat', [ChatController::class, 'index']);
     Route::post('trades/chat', [ChatController::class, 'store']);
+
+    Route::post('transaction/withdraw', [TransactionController::class, 'withdraw']);
 
     Route::get('wallets', [WalletController::class, 'index']);
     Route::get('wallets/{coin}/show', [WalletController::class, 'show']);
