@@ -17,7 +17,7 @@ class WalletResource extends JsonResource
         return [
             'id' => $this['id'],
             'coin' => new CoinResource($this->coin),
-            'address' => $this['address'],
+            'address' => AddressResource::collection($this->addresses),
             'balance' => $this['balance'],
         ];
     }
