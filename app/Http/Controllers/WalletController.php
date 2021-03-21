@@ -77,7 +77,11 @@ class WalletController extends Controller
 
     protected static function getBitcoinWalletBalance($address)
     {
-
+        return Http::withHeaders([
+            'Content-type' => 'application/json', //Content-Type: application/json
+            'X-API-Key' => env('CRYPTO_APP_KEY')])
+            ->post('https://rest.cryptoapis.io/v2/blockchain-data/bitcoin/'.env('CRYPTO_NET_1').'/addresses/'.$address)
+            ->json()['data']['item']['confirmedBalance']['amount'];
     }
 
     protected static function generateEthereumAddress($user){
@@ -104,7 +108,11 @@ class WalletController extends Controller
 
     protected static function getEthereumWalletBalance($address)
     {
-
+        return Http::withHeaders([
+            'Content-type' => 'application/json', //Content-Type: application/json
+            'X-API-Key' => env('CRYPTO_APP_KEY')])
+            ->post('https://rest.cryptoapis.io/v2/blockchain-data/ethereum/'.env('CRYPTO_NET_2').'/addresses/'.$address)
+            ->json()['data']['item']['confirmedBalance']['amount'];
     }
 
     protected static function generateBitcoinCashAddress($user){
@@ -131,7 +139,11 @@ class WalletController extends Controller
 
     protected static function getBitcoinCashWalletBalance($address)
     {
-
+        return Http::withHeaders([
+            'Content-type' => 'application/json', //Content-Type: application/json
+            'X-API-Key' => env('CRYPTO_APP_KEY')])
+            ->post('https://rest.cryptoapis.io/v2/blockchain-data/bitcoin-cash/'.env('CRYPTO_NET_1').'/addresses/'.$address)
+            ->json()['data']['item']['confirmedBalance']['amount'];
     }
 
     protected static function generateLitecoinAddress($user){
@@ -155,6 +167,10 @@ class WalletController extends Controller
 
     protected static function getLitecoinWalletBalance($address)
     {
-
+        return Http::withHeaders([
+            'Content-type' => 'application/json', //Content-Type: application/json
+            'X-API-Key' => env('CRYPTO_APP_KEY')])
+            ->post('https://rest.cryptoapis.io/v2/blockchain-data/litecoin/'.env('CRYPTO_NET_1').'/addresses/'.$address)
+            ->json()['data']['item']['confirmedBalance']['amount'];
     }
 }

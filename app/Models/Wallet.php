@@ -35,4 +35,9 @@ class Wallet extends Model
     {
         return $this->hasOne(Credential::class);
     }
+
+    public function addresses(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Address::class);
+    }
 }
