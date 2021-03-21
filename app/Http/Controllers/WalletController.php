@@ -14,10 +14,11 @@ class WalletController extends Controller
 {
     public static function generateWallets($user)
     {
-        self::generateBitcoinAddress($user);
-        self::generateEthereumAddress($user);
-        self::generateBitcoinCashAddress($user);
-        self::generateLitecoinAddress($user);
+        self::generateBitcoinWallet($user);
+        self::generateEthereumWallet($user);
+        self::generateBitcoinCashWallet($user);
+        self::generateLitecoinWallet($user);
+        self::generateRippleWallet($user);
     }
 
     public function index(): \Illuminate\Http\JsonResponse
@@ -34,7 +35,7 @@ class WalletController extends Controller
         return response()->json(['data' => new WalletTransactionResource($coin->wallets()->where('user_id', auth()->user()['id'])->first())]);
     }
 
-    public static function walletBalanceVerifiedForUser($user, $coin, $amount)
+    public static function walletBalanceVerifiedForUser($user, $coin, $amount): bool
     {
         $balance = 0;
         $wallet = $user->wallets()->where('coin_id', $coin['id'])->first();
@@ -50,28 +51,33 @@ class WalletController extends Controller
                 break;
             case "ltc":
                 $balance = self::getLitecoinWalletBalance($wallet['address']);
+                break;
+            case "xrp":
+                $balance = self::getRippleWalletBalance($wallet['address']);
+                break;
         }
         return $balance >= $amount;
     }
 
-    protected static function generateBitcoinAddress($user){
-        $btc_address = Http::withHeaders([
+    protected static function generateBitcoinWallet($user){
+        $btc_wallet = Http::withHeaders([
             'Content-type' => 'application/json', //Content-Type: application/json
             'X-API-Key' => env('CRYPTO_APP_KEY')
-        ])->post('https://api.cryptoapis.io/v1/bc/btc/testnet/address')->json();
+        ])->post('https://rest.cryptoapis.io/v2/blockchain-tools/bitcoin/'.env('CRYPTO_NET_1').'/addresses/generate')->json();
 
         $coin = Coin::all()->where('name', 'Bitcoin')->first();
         $wallet = Wallet::create([
             'coin_id' => $coin['id'],
             'user_id' => $user['id'],
-            'address' => $btc_address['payload']['address'],
             'balance' => 0.0000000
         ]);
 
+        self::storeAddressesByFormatForWallet($wallet, $btc_wallet['data']['item']['addresses']);
+
         $wallet->credential()->create([
-            'key' => Crypt::encryptString($btc_address['payload']['wif']),
-            'stuprk' => Crypt::encryptString($btc_address['payload']['privateKey']),
-            'stupuk' => Crypt::encryptString($btc_address['payload']['publicKey']),
+            'key' => Crypt::encryptString($btc_wallet['data']['item']['wif']),
+            'stuprk' => Crypt::encryptString($btc_wallet['data']['item']['privateKey']),
+            'stupuk' => Crypt::encryptString($btc_wallet['data']['item']['publicKey']),
         ]);
     }
 
@@ -84,25 +90,26 @@ class WalletController extends Controller
             ->json()['data']['item']['confirmedBalance']['amount'];
     }
 
-    protected static function generateEthereumAddress($user){
-        $eth_address = Http::withHeaders([
+    protected static function generateEthereumWallet($user){
+        $eth_wallet = Http::withHeaders([
             'Content-type' => 'application/json', //Content-Type: application/json
             'X-API-Key' => env('CRYPTO_APP_KEY')
-        ])->post('https://api.cryptoapis.io/v1/bc/eth/ropsten/address')->json();
+        ])->post('https://rest.cryptoapis.io/v2/blockchain-tools/ethereum/'.env('CRYPTO_NET_2').'/addresses/generate')->json();
 
         $coin = Coin::all()->where('name', 'Ethereum')->first();
 
         $wallet = Wallet::create([
             'coin_id' => $coin['id'],
             'user_id' => $user['id'],
-            'address' => $eth_address['payload']['address'],
             'balance' => 0.0000000
         ]);
 
+        self::storeAddressesByFormatForWallet($wallet, $eth_wallet['data']['item']['addresses']);
+
         $wallet->credential()->create([
-            'key' => Crypt::encryptString($eth_address['payload']['privateKey']),
-            'stuprk' => Crypt::encryptString($eth_address['payload']['privateKey']),
-            'stupuk' => Crypt::encryptString($eth_address['payload']['publicKey']),
+            'key' => Crypt::encryptString($eth_wallet['data']['item']['privateKey']),
+            'stuprk' => Crypt::encryptString($eth_wallet['data']['item']['privateKey']),
+            'stupuk' => Crypt::encryptString($eth_wallet['data']['item']['publicKey']),
         ]);
     }
 
@@ -115,25 +122,26 @@ class WalletController extends Controller
             ->json()['data']['item']['confirmedBalance']['amount'];
     }
 
-    protected static function generateBitcoinCashAddress($user){
-        $bch_address = Http::withHeaders([
+    protected static function generateBitcoinCashWallet($user){
+        $bch_wallet = Http::withHeaders([
             'Content-type' => 'application/json', //Content-Type: application/json
             'X-API-Key' => env('CRYPTO_APP_KEY')
-        ])->post('https://api.cryptoapis.io/v1/bc/bch/testnet/address')->json();
+        ])->post('https://rest.cryptoapis.io/v2/blockchain-tools/bitcoin-cash/'.env('CRYPTO_NET_1').'/addresses/generate')->json();
 
         $coin = Coin::all()->where('name', 'Bitcoin Cash')->first();
 
         $wallet = Wallet::create([
             'coin_id' => $coin['id'],
             'user_id' => $user['id'],
-            'address' => $bch_address['payload']['address'],
             'balance' => 0.0000000
         ]);
 
+        self::storeAddressesByFormatForWallet($wallet, $bch_wallet['data']['item']['addresses']);
+
         $wallet->credential()->create([
-            'key' => Crypt::encryptString($bch_address['payload']['wif']),
-            'stuprk' => Crypt::encryptString($bch_address['payload']['privateKey']),
-            'stupuk' => Crypt::encryptString($bch_address['payload']['publicKey']),
+            'key' => Crypt::encryptString($bch_wallet['data']['item']['wif']),
+            'stuprk' => Crypt::encryptString($bch_wallet['data']['item']['privateKey']),
+            'stupuk' => Crypt::encryptString($bch_wallet['data']['item']['publicKey']),
         ]);
     }
 
@@ -146,22 +154,24 @@ class WalletController extends Controller
             ->json()['data']['item']['confirmedBalance']['amount'];
     }
 
-    protected static function generateLitecoinAddress($user){
-        $ltc_address = Http::withHeaders([
+    protected static function generateLitecoinWallet($user){
+        $ltc_wallet = Http::withHeaders([
             'Content-type' => 'application/json', //Content-Type: application/json
             'X-API-Key' => env('CRYPTO_APP_KEY')
-        ])->post('https://api.cryptoapis.io/v1/bc/ltc/testnet/address')->json();
+        ])->post('https://rest.cryptoapis.io/v2/blockchain-tools/litecoin/'.env('CRYPTO_NET_1').'/addresses/generate')->json();
         $coin = Coin::all()->where('name', 'Litecoin')->first();
         $wallet = Wallet::create([
             'coin_id' => $coin['id'],
             'user_id' => $user['id'],
-            'address' => $ltc_address['payload']['address'],
             'balance' => 0.0000000
         ]);
+
+        self::storeAddressesByFormatForWallet($wallet, $ltc_wallet['data']['item']['addresses']);
+
         $wallet->credential()->create([
-            'key' => Crypt::encryptString($ltc_address['payload']['wif']),
-            'stuprk' => Crypt::encryptString($ltc_address['payload']['privateKey']),
-            'stupuk' => Crypt::encryptString($ltc_address['payload']['publicKey']),
+            'key' => Crypt::encryptString($ltc_wallet['data']['item']['wif']),
+            'stuprk' => Crypt::encryptString($ltc_wallet['data']['item']['privateKey']),
+            'stupuk' => Crypt::encryptString($ltc_wallet['data']['item']['publicKey']),
         ]);
     }
 
@@ -172,5 +182,45 @@ class WalletController extends Controller
             'X-API-Key' => env('CRYPTO_APP_KEY')])
             ->post('https://rest.cryptoapis.io/v2/blockchain-data/litecoin/'.env('CRYPTO_NET_1').'/addresses/'.$address)
             ->json()['data']['item']['confirmedBalance']['amount'];
+    }
+
+    protected static function generateRippleWallet($user){
+        $xrp_wallet = Http::withHeaders([
+            'Content-type' => 'application/json', //Content-Type: application/json
+            'X-API-Key' => env('CRYPTO_APP_KEY')
+        ])->post('https://rest.cryptoapis.io/v2/blockchain-tools/ripple/'.env('CRYPTO_NET_1').'/addresses/generate')->json();
+        $coin = Coin::all()->where('name', 'ripple')->first();
+        $wallet = Wallet::create([
+            'coin_id' => $coin['id'],
+            'user_id' => $user['id'],
+            'balance' => 0.0000000
+        ]);
+
+        self::storeAddressesByFormatForWallet($wallet, $xrp_wallet['data']['item']['addresses']);
+
+        $wallet->credential()->create([
+            'key' => Crypt::encryptString($xrp_wallet['data']['item']['privateKey']),
+            'stuprk' => Crypt::encryptString($xrp_wallet['data']['item']['privateKey']),
+            'stupuk' => Crypt::encryptString($xrp_wallet['data']['item']['publicKey']),
+        ]);
+    }
+
+    protected static function getRippleWalletBalance($address)
+    {
+        return Http::withHeaders([
+            'Content-type' => 'application/json', //Content-Type: application/json
+            'X-API-Key' => env('CRYPTO_APP_KEY')])
+            ->post('https://rest.cryptoapis.io/v2/blockchain-data/ripple/'.env('CRYPTO_NET_1').'/addresses/'.$address)
+            ->json()['data']['item']['confirmedBalance']['amount'];
+    }
+
+    protected static function storeAddressesByFormatForWallet($wallet, $addresses)
+    {
+        foreach ($addresses as $address){
+            $wallet->addresses()->create([
+                'format' => $address['format'],
+                'address' => $address['address']
+            ]);
+        }
     }
 }

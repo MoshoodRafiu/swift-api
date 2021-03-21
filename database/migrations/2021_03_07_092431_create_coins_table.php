@@ -49,6 +49,13 @@ class CreateCoinsTable extends Migration
             'abbr' => 'ltc',
             'logo' => 'litecoin.png'
         ]);
+
+        \Illuminate\Support\Facades\DB::table('coins')->insert([
+            'name' => 'Ripple',
+            'slug' => 'ripple',
+            'abbr' => 'xrp',
+            'logo' => 'ripple.png'
+        ]);
     }
 
     /**
