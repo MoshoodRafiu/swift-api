@@ -67,3 +67,11 @@ Route::middleware('auth:api')->group(function (){
     Route::get('wallets', [WalletController::class, 'index']);
     Route::get('wallets/{coin}/show', [WalletController::class, 'show']);
 });
+
+Route::prefix('admin/')->middleware(['adminOnly'])->group(function (){
+    Route::get('dashboard', []);
+});
+
+Route::prefix('admin/')->middleware(['adminOrAgent'])->group(function (){
+
+});
