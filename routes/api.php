@@ -72,7 +72,10 @@ Route::middleware('auth:api')->group(function (){
 Route::prefix('admin/')->middleware(['adminOnly'])->group(function (){
     Route::get('dashboard', [AdminController::class, 'index']);
 
-    Route::get('trades', [TradeController::class, 'index']);
+    Route::get('trades/{type}/fetch', [TradeController::class, 'getAllTrades']);
+    Route::get('trades/{trade}/show', [TradeController::class, 'show']);
+
+    Route::get('users/{type}/fetch', [AdminController::class, 'getAllUsers']);
 });
 
 Route::prefix('admin/')->middleware(['adminOrAgent'])->group(function (){

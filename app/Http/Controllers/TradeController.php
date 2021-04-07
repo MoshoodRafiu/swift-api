@@ -17,21 +17,16 @@ class TradeController extends Controller
         $trades = Trade::query()->where(function ($q){
             $q->where('buyer_id', auth()->user()['id'])
                 ->orWhere('seller_id', auth()->user()['id']);});
-        switch ($type){
-            case "pending":
-                $trades = $trades->where('status', 0)->get();
-                break;
-            case "success":
-                $trades = $trades->where('status', 1)->get();
-                break;
-            case "cancelled":
-                $trades = $trades->where('status', 2)->get();
-                break;
-            default:
-                $trades = $trades->get();
-        }
         return response()->json([
-            'data' => $trades
+            'data' => TradeResource::collection($this->filterTradesByType($trades, $type))
+        ]);
+    }
+
+    public function getAllTrades($type): \Illuminate\Http\JsonResponse
+    {
+        $trades = Trade::query();
+        return response()->json([
+            'data' => TradeResource::collection($this->filterTradesByType($trades, $type))
         ]);
     }
 
@@ -275,7 +270,7 @@ class TradeController extends Controller
         return $amount * 23456;
     }
 
-    public function userRoleByAdvert($user, $advert): ?string
+    protected function userRoleByAdvert($user, $advert): ?string
     {
         $role = null;
         switch ($advert['type']){
@@ -296,18 +291,17 @@ class TradeController extends Controller
         }
         return $role;
     }
-
-    public function userRoleByTrade($user, $trade): ?string
+    protected function filterTradesByType($trades, $type)
     {
-        $role = null;
-        switch ($user['id']){
-            case $trade['buyer_id']:
-                $role = 'buyer';
-                break;
-            case $trade['seller_id']:
-                $role = 'seller';
-                break;
+        switch ($type){
+            case "pending":
+                return $trades->where('status', 0)->get();
+            case "success":
+                return $trades->where('status', 1)->get();
+            case "cancelled":
+                return $trades->where('status', 2)->get();
+            default:
+                return $trades->get();
         }
-        return $role;
     }
 }
