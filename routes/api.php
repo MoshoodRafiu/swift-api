@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdvertController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
@@ -69,7 +70,9 @@ Route::middleware('auth:api')->group(function (){
 });
 
 Route::prefix('admin/')->middleware(['adminOnly'])->group(function (){
-    Route::get('dashboard', []);
+    Route::get('dashboard', [AdminController::class, 'index']);
+
+    Route::get('trades', [TradeController::class, 'index']);
 });
 
 Route::prefix('admin/')->middleware(['adminOrAgent'])->group(function (){
